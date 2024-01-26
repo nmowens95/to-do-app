@@ -1,6 +1,6 @@
 # This will serialize and render out our data to json automatically
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 
 from todo.models import Todo
@@ -19,6 +19,8 @@ def get_tasks(request):
     return Response(serializer.data)
     
 @api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
 def get_task(request, pk):
     """
     Get a singular task with a given ID
@@ -39,6 +41,8 @@ def post_task(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
+@authentication_classes([])
+@permission_classes([])
 def update_task(request, pk):
     """
     Update a task with the given id
@@ -55,7 +59,9 @@ def update_task(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
-def delete_task(request, pk):
+@authentication_classes([])
+@permission_classes([])
+def delete_task(request, pk: int):
     """
     Delete a task with a given ID
     """
