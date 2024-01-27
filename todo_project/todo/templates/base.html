@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock %} | ToDo</title>
+        <link rel="stylesheet" href="static/styles.css">
+        <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+    </head>
+
+    <body x-data="{ editMode: false }">
+        <nav>
+            <a href="#">Home</a>
+            <div>
+                <a href="#">About</a>
+                <a href="#">Sign up</a>
+                <a href="#">Log in</a>
+            </div>
+        </nav>
+        <h1 style="text-align: center;">To Do List</h1>
+        
+        <!-- Add Task Form -->
+        <form hx-post="api/tasks/new/" hx-trigger="submit" hx-swap="none">
+            {% csrf_token %}
+            <div class="postTask-container">
+                <label for="taskName">Task Name:</label>
+                <input type="text" id="taskName" name="name" placeholder="Add a new task" required>
+            </div>
+            <div>
+                <label for="taskDescription">Description:</label>
+                <textarea id="taskDescription" name="description" placeholder="Describe task" rows="4" cols="50" required></textarea>
+            </div>
+            <button type="submit">Add</button>
+        </form>
+
+        <hr/>
+
+        <!-- Tasks List -->
+        <h3>Tasks</h3>
+        <ul>
+            {% for todo in todos %}
+                <li x-data="{ edit: false }">
+                    <!-- Edit Task Form -->
+                    <form x-show="edit" hx-put="api/tasks/{{ todo.id }}/update/" hx-trigger="submit" hx-swap="none">
+                        {% csrf_token %}
+                        <span>
+                            <input type="text" name="name" x-model="todo.name" required>
+                            <textarea name="description" rows="4" cols="50" x-model="todo.description" required></textarea>
+                        </span>
+                        <button type="submit">Save</button>
+                        <button type="button" x-on:click="edit = !editMode">Cancel</button>
+                    </form>
+                    
+                    <!-- Display Task -->
+                    <div id="task-list" x-show="!edit">
+                        <span>{{ todo.name }}: {{ todo.description }}</span>
+                        <button x-on:click="edit = !editMode">Edit</button>
+                        <button hx-delete="api/tasks/{{ todo.id }}/delete/" hx-target="#task-list">Delete</button>
+                        <!-- Holding this here:
+                        hx-headers="{ 'X-CSRFToken': '{{ csrf_token }}' }"
+                        -->
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+    </body>
+</html>
