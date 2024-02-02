@@ -129,9 +129,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 # Define the STATIC_URL and STATICFILES_DIRS
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'api' / STATIC_URL
+    BASE_DIR / STATIC_URL
 ]
 
 
